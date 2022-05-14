@@ -4,6 +4,7 @@ const hbs = require('hbs');
 const fetch = require('node-fetch');
 
 const app = express();
+const port = process.env.PORT || 3000;
 
 const publicFolder = path.join(__dirname, '../public');
 const viewsPath = path.join(__dirname, '../templates/views');
@@ -38,6 +39,30 @@ app.get('/help', (req, res) => {
     });
 });
 
+
+async function getWeather(location) {
+
+    const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=5279b863eebfcf5655b440e3b7d8a314`);
+    //console.log(response);
+    const locations = await response.json();
+
+    if ( locations.length === 0 ) {
+        return {"Error": "Location is not found"};
+    }
+    //console.log(locations);
+    const {lat, lon} = locations[0];
+    //console.log(lat, lon);
+
+    const forecastURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=5279b863eebfcf5655b440e3b7d8a314`;
+                                                                                                           // '5279b863eebfcf5655b440e3b7d8a314'
+    //console.log(forecastURL);
+    const forecastResult = await fetch( forecastURL );
+    const forecastJSON = await forecastResult.json();
+    //console.log(forecastJSON);
+
+    return {"Location": forecastJSON.name, "Weather": forecastJSON.weather[0].description};
+}
+
 app.get('/weather', (req, res) => {
     if ( !req.query.address ) {
         return res.send({error: 'You must provide address query string'});
@@ -45,22 +70,11 @@ app.get('/weather', (req, res) => {
 
     const address = req.query.address;
 
-    (async () =>  {
-        const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${address}&limit=1&appid=5279b863eebfcf5655b440e3b7d8a314`);
-        const locations = await response.json();
-    
-        const {lat, lon} = locations[0];
-        console.log(lat, lon);
-    
-        const forecastURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=5279b863eebfcf5655b440e3b7d8a314`;
-                                                                                                               // '5279b863eebfcf5655b440e3b7d8a314'
-        console.log(forecastURL);
-        const forecastResult = await fetch( forecastURL );
-        const forecastJSON = await forecastResult.json();
-        console.log(forecastJSON['weather'][0]['main']);
-        res.send(forecastJSON['weather'][0]);
+    (async () => {
+        const result = await getWeather(address);
+        console.log(result);
+        res.send(result);
     })();
-
 
 });
 
@@ -86,6 +100,6 @@ app.get('*', (req, res) => {
 // app.com/help
 // app.com/about
 
-app.listen(3000, () => {
-    console.log('Server listening on port 3000');
+app.listen(port, () => {
+    console.log('Server listening on port ' +port);
 });

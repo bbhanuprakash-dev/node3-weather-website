@@ -27,28 +27,12 @@ async function getWeather(location) {
     message1.textContent = 'Loading...';
     message2.textContent = '';
 
-    const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${location}&limit=1&appid=5279b863eebfcf5655b440e3b7d8a314`);
-    //console.log(response);
-    const locations = await response.json();
-
-    if ( locations.length === 0 ) {
-        //console.log('Location not found!');
-        message1.textContent = 'Location not found!';
-        message2.textContent = '';
-        return;
-    }
-    //console.log(locations);
-    const {lat, lon} = locations[0];
-    //console.log(lat, lon);
-
-    const forecastURL = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=5279b863eebfcf5655b440e3b7d8a314`;
-                                                                                                           // '5279b863eebfcf5655b440e3b7d8a314'
-    //console.log(forecastURL);
-    const forecastResult = await fetch( forecastURL );
-    const forecastJSON = await forecastResult.json();
+    const response = await fetch(`http://localhost:3000/weather?address=${location}`);
+    
+    const forecastJSON = await response.json();
     console.log(forecastJSON);
 
-    message1.textContent = forecastJSON.name;
-    message2.textContent = forecastJSON.weather[0].description;
+    message1.textContent = forecastJSON.Location;
+    message2.textContent = forecastJSON.Weather;
     //res.send(forecastJSON['weather'][0]);
 }
