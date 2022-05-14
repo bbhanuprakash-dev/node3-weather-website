@@ -27,7 +27,7 @@ async function getWeather(location) {
     message1.textContent = 'Loading...';
     message2.textContent = '';
 
-    const response = await fetch(`http://localhost:3000/weather?address=${location}`);
+    const response = await fetch(`/weather?address=${location}`);
     
     const forecastJSON = await response.json();
     console.log(forecastJSON);
