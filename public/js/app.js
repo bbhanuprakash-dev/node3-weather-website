@@ -4,9 +4,7 @@ const weatherForm = document.querySelector('form');
 const search = document.querySelector('input');
 const message1 = document.querySelector('#message-1');
 const message2 = document.querySelector('#message-2');
-
-// message1.textContent = '';
-// message2.textContent = '';
+const message3 = document.querySelector('#message-3');
 
 weatherForm.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -21,11 +19,11 @@ weatherForm.addEventListener('submit', (event) => {
 });
 
 
-//const address = req.query.add`ress;
-
 async function getWeather(location) {
     message1.textContent = 'Loading...';
     message2.textContent = '';
+    message3.textContent = '';
+
 
     const response = await fetch(`/weather?address=${location}`);
     
@@ -34,5 +32,5 @@ async function getWeather(location) {
 
     message1.textContent = forecastJSON.Location;
     message2.textContent = forecastJSON.Weather;
-    //res.send(forecastJSON['weather'][0]);
+    message3.textContent = forecastJSON.temp;
 }

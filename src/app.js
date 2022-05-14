@@ -60,7 +60,7 @@ async function getWeather(location) {
     const forecastJSON = await forecastResult.json();
     //console.log(forecastJSON);
 
-    return {"Location": forecastJSON.name, "Weather": forecastJSON.weather[0].description};
+    return {"Location": forecastJSON.name, "Weather": forecastJSON.weather[0].description, "temp":forecastJSON.main.temp};
 }
 
 app.get('/weather', (req, res) => {
